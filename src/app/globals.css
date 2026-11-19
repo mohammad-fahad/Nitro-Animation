@@ -1,0 +1,138 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-nitro-black: #050505;
+  --color-nitro-panel: #0b0b0b;
+  --color-nitro-yellow: #e3ea00;
+  --color-nitro-lime: #b8f000;
+  --color-nitro-ash: #848484;
+  --font-sans: var(--font-archivo);
+  --font-display: var(--font-archivo-black);
+}
+
+:root {
+  --background: #050505;
+  --foreground: #f4f4f0;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--background);
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: #e3ea00;
+  color: #050505;
+}
+
+a,
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid #e3ea00;
+  outline-offset: 3px;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050505;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2a2a2a;
+  border: 2px solid #050505;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #e3ea00;
+}
+
+.hero-grain {
+  background-image: radial-gradient(
+      circle at 18% 22%,
+      rgba(227, 234, 0, 0.06),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 78% 68%,
+      rgba(184, 240, 0, 0.05),
+      transparent 36%
+    );
+  mix-blend-mode: screen;
+  opacity: 0.8;
+}
+
+.hero-glow {
+  background:
+    radial-gradient(
+      ellipse 58% 42% at 50% 54%,
+      rgba(183, 235, 0, 0.16),
+      rgba(5, 5, 5, 0) 72%
+    ),
+    radial-gradient(
+      ellipse 40% 55% at 50% 48%,
+      rgba(255, 255, 255, 0.045),
+      rgba(5, 5, 5, 0) 70%
+    );
+}
+
+.hero-vignette {
+  background: radial-gradient(
+    ellipse 120% 95% at 50% 45%,
+    transparent 42%,
+    rgba(0, 0, 0, 0.55) 100%
+  );
+}
+
+.display-wordmark {
+  font-family: var(--font-archivo-black), "Arial Black", sans-serif;
+  font-size: clamp(8rem, 31.5vw, 42rem);
+  font-weight: 400;
+  letter-spacing: -0.065em;
+  line-height: 0.76;
+  color: #e3ea00;
+}
+
+.thin-rule {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
