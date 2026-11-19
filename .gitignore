@@ -13,8 +13,9 @@
 # testing
 /coverage
 
-# local review captures and server logs
+# local review captures, reference assets, and server logs
 /.review/
+/.ref/
 
 # next.js
 /.next/
