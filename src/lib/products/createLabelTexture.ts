@@ -22,7 +22,7 @@ function canvasFont(fallback: string) {
   }
 
   const font = getComputedStyle(document.documentElement)
-    .getPropertyValue("--font-archivo-black")
+    .getPropertyValue("--font-orbitron")
     .trim();
 
   return font ? `${font}, ${fallback}` : fallback;
@@ -34,7 +34,7 @@ function bodyFont(fallback: string) {
   }
 
   const font = getComputedStyle(document.documentElement)
-    .getPropertyValue("--font-archivo")
+    .getPropertyValue("--font-poppins")
     .trim();
 
   return font ? `${font}, ${fallback}` : fallback;

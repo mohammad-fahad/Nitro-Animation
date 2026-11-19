@@ -8,6 +8,7 @@ export interface ProductConfig {
   id: "gold" | "red" | "green" | "sky" | "blue";
   name: string;
   flavor: string;
+  priceUsd: number;
   palette: ProductPalette;
   artworkSource: "procedural-provisional" | "provided";
   labelTexture?: string;
