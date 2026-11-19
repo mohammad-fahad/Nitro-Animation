@@ -107,13 +107,25 @@ button {
 }
 
 .display-wordmark {
+  display: inline-block;
   font-family: var(--font-archivo-black), "Arial Black", sans-serif;
-  font-size: clamp(8rem, 30vw, 42rem);
+  font-size: clamp(8rem, 25.7vw, 42rem);
   font-style: italic;
   font-weight: 400;
   letter-spacing: -0.055em;
   line-height: 0.76;
   color: #e3ea00;
+  transform: translateX(-0.151em);
+}
+
+.since-headline {
+  font-family: var(--font-archivo-black), "Arial Black", sans-serif;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 0.8;
+  letter-spacing: -0.045em;
+  color: var(--color-nitro-yellow);
+  text-shadow: 0 28px 90px rgba(0, 0, 0, 0.7);
 }
 
 .page-shell {

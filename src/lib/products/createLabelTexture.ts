@@ -5,6 +5,30 @@ const TEXTURE_WIDTH = 2048;
 const TEXTURE_HEIGHT = 1280;
 const FRONT_CENTER = TEXTURE_WIDTH / 2;
 
+function hexToRgb(hex: string) {
+  const value = Number.parseInt(hex.replace("#", ""), 16);
+  return {
+    r: (value >> 16) & 255,
+    g: (value >> 8) & 255,
+    b: value & 255,
+  };
+}
+
+function colorWithAlpha(hex: string, alpha: number) {
+  const { r, g, b } = hexToRgb(hex);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function shadeColor(hex: string, amount: number) {
+  const { r, g, b } = hexToRgb(hex);
+  const target = amount < 0 ? 0 : 255;
+  const mix = Math.abs(amount);
+  const channel = (value: number) =>
+    Math.round(value + (target - value) * mix);
+
+  return `rgb(${channel(r)}, ${channel(g)}, ${channel(b)})`;
+}
+
 function mulberry32(seed: number) {
   let value = seed;
   return () => {
@@ -105,6 +129,79 @@ function drawArc(
   context.restore();
 }
 
+function drawDewDrop(
+  context: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  radius: number,
+  alpha: number,
+) {
+  context.save();
+
+  const shadow = context.createRadialGradient(
+    x,
+    y + radius * 0.5,
+    radius * 0.2,
+    x,
+    y + radius * 0.5,
+    radius * 1.8,
+  );
+  shadow.addColorStop(0, `rgba(0, 0, 0, ${0.42 * alpha})`);
+  shadow.addColorStop(0.6, `rgba(0, 0, 0, ${0.16 * alpha})`);
+  shadow.addColorStop(1, "rgba(0, 0, 0, 0)");
+  context.fillStyle = shadow;
+  context.beginPath();
+  context.ellipse(
+    x,
+    y + radius * 0.5,
+    radius * 1.55,
+    radius * 0.95,
+    0,
+    0,
+    Math.PI * 2,
+  );
+  context.fill();
+
+  const body = context.createRadialGradient(
+    x - radius * 0.38,
+    y - radius * 0.45,
+    radius * 0.08,
+    x,
+    y,
+    radius * 1.18,
+  );
+  body.addColorStop(0, `rgba(255, 255, 255, ${0.95 * alpha})`);
+  body.addColorStop(0.22, `rgba(238, 255, 240, ${0.62 * alpha})`);
+  body.addColorStop(0.52, `rgba(190, 232, 178, ${0.3 * alpha})`);
+  body.addColorStop(0.82, `rgba(22, 48, 16, ${0.34 * alpha})`);
+  body.addColorStop(1, `rgba(235, 255, 235, ${0.36 * alpha})`);
+  context.fillStyle = body;
+  context.beginPath();
+  context.ellipse(x, y, radius, radius * 1.22, 0, 0, Math.PI * 2);
+  context.fill();
+
+  context.fillStyle = `rgba(255, 255, 255, ${0.9 * alpha})`;
+  context.beginPath();
+  context.ellipse(
+    x - radius * 0.32,
+    y - radius * 0.46,
+    radius * 0.22,
+    radius * 0.14,
+    -0.5,
+    0,
+    Math.PI * 2,
+  );
+  context.fill();
+
+  context.strokeStyle = `rgba(240, 255, 230, ${0.3 * alpha})`;
+  context.lineWidth = Math.max(0.6, radius * 0.08);
+  context.beginPath();
+  context.ellipse(x, y, radius * 0.94, radius * 1.16, 0, 0, Math.PI * 2);
+  context.stroke();
+
+  context.restore();
+}
+
 function drawEmblem(
   context: CanvasRenderingContext2D,
   product: ProductConfig,
@@ -112,57 +209,119 @@ function drawEmblem(
   y: number,
   options: { scaleX?: number; scaleY?: number; glow?: number } = {},
 ) {
-  const { accentBright, glow } = product.palette;
+  const { accent, accentBright, glow } = product.palette;
   const scaleX = options.scaleX ?? 1;
   const scaleY = options.scaleY ?? 1;
   const glowStrength = options.glow ?? 1;
 
-  const aura = context.createRadialGradient(x, y, 20, x, y, 330);
-  aura.addColorStop(0, `rgba(170, 235, 20, ${0.19 * glowStrength})`);
-  aura.addColorStop(0.42, `rgba(100, 190, 0, ${0.07 * glowStrength})`);
+  const aura = context.createRadialGradient(x, y, 24, x, y, 520);
+  aura.addColorStop(0, colorWithAlpha(glow, 0.26 * glowStrength));
+  aura.addColorStop(0.34, colorWithAlpha(accent, 0.12 * glowStrength));
+  aura.addColorStop(0.72, colorWithAlpha(accent, 0.03 * glowStrength));
   aura.addColorStop(1, "rgba(0, 0, 0, 0)");
   context.fillStyle = aura;
-  context.fillRect(x - 380, y - 380, 760, 760);
+  context.fillRect(x - 560, y - 620, 1120, 1240);
 
   const random = mulberry32(81023);
-  for (let index = 0; index < 12; index += 1) {
+
+  context.save();
+  context.globalCompositeOperation = "screen";
+  for (let layer = 0; layer < 3; layer += 1) {
+    const points = 26;
+    const spread = 250 + layer * 62;
+
+    context.beginPath();
+    for (let index = 0; index < points; index += 1) {
+      const angle = (index / points) * Math.PI * 2;
+      const reach = spread * (0.48 + random() * 0.78);
+      const px = x + Math.cos(angle) * reach;
+      const py = y + Math.sin(angle) * reach * 1.24;
+
+      if (index === 0) {
+        context.moveTo(px, py);
+      } else {
+        context.lineTo(px, py);
+      }
+    }
+    context.closePath();
+
+    const splash = context.createRadialGradient(x, y, 30, x, y, spread * 1.34);
+    splash.addColorStop(0, colorWithAlpha(accent, 0.15 * glowStrength));
+    splash.addColorStop(0.55, colorWithAlpha(glow, 0.08 * glowStrength));
+    splash.addColorStop(1, "rgba(0, 0, 0, 0)");
+    context.fillStyle = splash;
+    context.shadowColor = glow;
+    context.shadowBlur = 58;
+    context.fill();
+  }
+  context.restore();
+
+  context.save();
+  context.globalCompositeOperation = "screen";
+  for (let index = 0; index < 16; index += 1) {
+    const angle = random() * Math.PI * 2;
+    const inner = 80 + random() * 150;
+    const outer = 240 + random() * 220;
+    const width = 10 + random() * 34;
+    const tangentX = Math.cos(angle + Math.PI / 2);
+    const tangentY = Math.sin(angle + Math.PI / 2);
+    const innerX = x + Math.cos(angle) * inner;
+    const innerY = y + Math.sin(angle) * inner * 1.1;
+    const outerX = x + Math.cos(angle) * outer;
+    const outerY = y + Math.sin(angle) * outer * 1.14;
+
+    const shard = context.createLinearGradient(innerX, innerY, outerX, outerY);
+    shard.addColorStop(0, colorWithAlpha(accentBright, 0.4 * glowStrength));
+    shard.addColorStop(1, colorWithAlpha(glow, 0));
+    context.fillStyle = shard;
+    context.beginPath();
+    context.moveTo(innerX + tangentX * width, innerY + tangentY * width);
+    context.lineTo(outerX, outerY);
+    context.lineTo(innerX - tangentX * width, innerY - tangentY * width);
+    context.closePath();
+    context.fill();
+  }
+  context.restore();
+
+  for (let index = 0; index < 18; index += 1) {
     drawArc(
       context,
       random,
-      x + (random() - 0.5) * 160,
-      y + (random() - 0.5) * 220,
-      index % 3 === 0 ? "#f4ffd2" : glow,
-      1 + random() * 2,
-      (0.12 + random() * 0.22) * glowStrength,
+      x + (random() - 0.5) * 340,
+      y + (random() - 0.5) * 420,
+      index % 4 === 0 ? "#ffffff" : index % 3 === 0 ? accentBright : glow,
+      1 + random() * 2.2,
+      (0.18 + random() * 0.34) * glowStrength,
     );
   }
 
   context.save();
   context.translate(x, y);
+  context.rotate(-0.1);
   context.scale(scaleX, scaleY);
   context.transform(1, 0, -0.1, 1, 0, 0);
 
   const blade = () => {
     context.beginPath();
-    context.moveTo(-195, -265);
-    context.lineTo(-25, -265);
-    context.lineTo(76, -22);
-    context.lineTo(76, -265);
-    context.lineTo(205, -265);
-    context.lineTo(205, 265);
-    context.lineTo(32, 265);
-    context.lineTo(-70, 22);
-    context.lineTo(-70, 265);
-    context.lineTo(-195, 265);
+    context.moveTo(-205, -300);
+    context.lineTo(-30, -270);
+    context.lineTo(76, -25);
+    context.lineTo(76, -270);
+    context.lineTo(205, -300);
+    context.lineTo(205, 260);
+    context.lineTo(30, 300);
+    context.lineTo(-70, 40);
+    context.lineTo(-70, 300);
+    context.lineTo(-205, 260);
     context.closePath();
   };
 
   const shell = context.createLinearGradient(-220, -260, 230, 270);
-  shell.addColorStop(0, "#244400");
-  shell.addColorStop(0.22, "#0c1d00");
-  shell.addColorStop(0.48, "#183800");
-  shell.addColorStop(0.74, "#071100");
-  shell.addColorStop(1, "#020600");
+  shell.addColorStop(0, shadeColor(accent, -0.68));
+  shell.addColorStop(0.22, shadeColor(accent, -0.88));
+  shell.addColorStop(0.48, shadeColor(accent, -0.76));
+  shell.addColorStop(0.74, shadeColor(accent, -0.92));
+  shell.addColorStop(1, shadeColor(accent, -0.96));
 
   context.save();
   context.shadowColor = glow;
@@ -174,10 +333,10 @@ function drawEmblem(
 
   blade();
   context.strokeStyle = accentBright;
-  context.globalAlpha = 0.9;
-  context.lineWidth = 5;
+  context.globalAlpha = 0.95;
+  context.lineWidth = 7;
   context.shadowColor = glow;
-  context.shadowBlur = 24;
+  context.shadowBlur = 34;
   context.stroke();
   context.globalAlpha = 1;
   context.shadowBlur = 0;
@@ -187,17 +346,17 @@ function drawEmblem(
   context.clip();
 
   const energy = context.createLinearGradient(-180, 220, 160, -240);
-  energy.addColorStop(0, "rgba(4, 14, 0, 0.82)");
-  energy.addColorStop(0.32, "rgba(70, 150, 0, 0.24)");
-  energy.addColorStop(0.55, "rgba(225, 255, 150, 0.2)");
-  energy.addColorStop(0.72, "rgba(120, 235, 0, 0.1)");
-  energy.addColorStop(1, "rgba(1, 5, 0, 0.9)");
+  energy.addColorStop(0, colorWithAlpha(accent, 0.18));
+  energy.addColorStop(0.32, colorWithAlpha(accent, 0.26));
+  energy.addColorStop(0.55, colorWithAlpha(accentBright, 0.22));
+  energy.addColorStop(0.72, colorWithAlpha(accent, 0.12));
+  energy.addColorStop(1, "rgba(2, 4, 2, 0.94)");
   context.fillStyle = energy;
   context.fillRect(-260, -300, 520, 600);
 
   context.globalCompositeOperation = "screen";
 
-  context.fillStyle = "rgba(226, 255, 150, 0.44)";
+  context.fillStyle = colorWithAlpha(accentBright, 0.44);
   context.beginPath();
   context.moveTo(-178, -252);
   context.lineTo(-128, -252);
@@ -214,41 +373,58 @@ function drawEmblem(
   context.closePath();
   context.fill();
 
-  context.strokeStyle = "rgba(255, 255, 255, 0.62)";
-  context.lineWidth = 4;
+  context.strokeStyle = "rgba(255, 255, 255, 0.88)";
+  context.lineWidth = 5;
+  context.shadowColor = "#ffffff";
+  context.shadowBlur = 18;
   context.beginPath();
-  context.moveTo(-150, 238);
-  context.lineTo(-36, -55);
-  context.lineTo(30, 12);
-  context.lineTo(148, -235);
+  context.moveTo(-152, 244);
+  context.lineTo(-112, 116);
+  context.lineTo(-42, -8);
+  context.lineTo(48, -132);
+  context.lineTo(144, -246);
   context.stroke();
 
-  context.strokeStyle = "rgba(205, 255, 90, 0.4)";
-  context.lineWidth = 2;
+  context.strokeStyle = colorWithAlpha(accentBright, 0.62);
+  context.lineWidth = 2.4;
+  context.shadowColor = glow;
+  context.shadowBlur = 12;
   context.beginPath();
-  context.moveTo(-185, 112);
-  context.lineTo(-62, -132);
-  context.lineTo(12, -32);
-  context.lineTo(108, -222);
+  context.moveTo(-184, 118);
+  context.lineTo(-128, 20);
+  context.lineTo(-58, -96);
+  context.lineTo(18, -204);
+  context.stroke();
+
+  context.strokeStyle = "rgba(255, 255, 255, 0.5)";
+  context.lineWidth = 1.6;
+  context.beginPath();
+  context.moveTo(-170, 246);
+  context.lineTo(-134, 132);
+  context.lineTo(-70, 26);
+  context.lineTo(10, -84);
+  context.lineTo(96, -196);
   context.stroke();
   context.restore();
 
   context.save();
   context.beginPath();
-  context.moveTo(56, -265);
-  context.lineTo(6, -30);
-  context.lineTo(84, 44);
-  context.lineTo(34, 265);
-  context.lineTo(16, 265);
-  context.lineTo(62, 42);
-  context.lineTo(-18, -32);
-  context.lineTo(32, -265);
+  context.moveTo(68, -272);
+  context.lineTo(8, -34);
+  context.lineTo(88, 40);
+  context.lineTo(32, 272);
+  context.lineTo(8, 272);
+  context.lineTo(62, 46);
+  context.lineTo(-18, -28);
+  context.lineTo(32, -272);
   context.closePath();
-  context.fillStyle = "rgba(2, 8, 0, 0.72)";
+  context.fillStyle = "rgba(2, 8, 0, 0.82)";
   context.fill();
 
-  context.strokeStyle = "rgba(236, 255, 170, 0.62)";
-  context.lineWidth = 2.5;
+  context.strokeStyle = "rgba(240, 255, 190, 0.75)";
+  context.lineWidth = 3;
+  context.shadowColor = glow;
+  context.shadowBlur = 16;
   context.stroke();
   context.restore();
 
@@ -295,8 +471,8 @@ function drawWordmark(
   );
   lime.addColorStop(0, accentBright);
   lime.addColorStop(0.44, accent);
-  lime.addColorStop(0.7, "#79a800");
-  lime.addColorStop(1, "#3d6600");
+  lime.addColorStop(0.7, shadeColor(accent, -0.28));
+  lime.addColorStop(1, shadeColor(accent, -0.62));
 
   context.shadowColor = "rgba(0, 0, 0, 0.9)";
   context.shadowBlur = 12;
@@ -310,7 +486,7 @@ function drawWordmark(
   context.strokeStyle = "rgba(255, 255, 255, 0.14)";
   context.lineWidth = 2;
   context.strokeText(first, startX, 0);
-  context.strokeStyle = "rgba(220, 255, 90, 0.18)";
+  context.strokeStyle = colorWithAlpha(accentBright, 0.18);
   context.strokeText(last, startX + firstWidth, 0);
 
   context.restore();
@@ -319,51 +495,47 @@ function drawWordmark(
 function drawFrontPanel(
   context: CanvasRenderingContext2D,
   product: ProductConfig,
-  random: () => number,
 ) {
   const font = bodyFont('"Arial", sans-serif');
+  const { accentBright } = product.palette;
 
-  drawWordmark(context, product, FRONT_CENTER, 388, 164);
+  context.save();
+  context.fillStyle = colorWithAlpha(accentBright, 0.9);
+  context.beginPath();
+  context.moveTo(FRONT_CENTER - 238, 160);
+  context.lineTo(FRONT_CENTER - 214, 160);
+  context.lineTo(FRONT_CENTER - 224, 177);
+  context.lineTo(FRONT_CENTER - 208, 177);
+  context.lineTo(FRONT_CENTER - 234, 201);
+  context.lineTo(FRONT_CENTER - 226, 182);
+  context.lineTo(FRONT_CENTER - 242, 182);
+  context.closePath();
+  context.fill();
 
-  context.fillStyle = "rgba(236, 236, 228, 0.72)";
-  context.font = `600 25px ${font}`;
+  context.fillStyle = "rgba(236, 238, 228, 0.86)";
+  context.font = `600 22px ${font}`;
   context.textAlign = "center";
   context.textBaseline = "middle";
-  drawSpacedText(context, "ENERGY DRINK", FRONT_CENTER, 490, 16);
+  drawSpacedText(context, "ZERO SUGAR · FLAVOUR", FRONT_CENTER + 12, 176, 5);
 
-  drawEmblem(context, product, FRONT_CENTER, 820, {
-    scaleX: 0.94,
-    scaleY: 0.88,
-    glow: 0.9,
+  context.fillStyle = "rgba(255, 255, 255, 0.32)";
+  context.font = `500 16px ${font}`;
+  drawSpacedText(context, "500 ML", FRONT_CENTER, 214, 8);
+  context.restore();
+
+  drawEmblem(context, product, FRONT_CENTER, 570, {
+    scaleX: 1.05,
+    scaleY: 1.02,
+    glow: 0.92,
   });
 
-  context.fillStyle = "rgba(255, 255, 255, 0.8)";
-  context.font = `500 24px ${font}`;
-  drawSpacedText(context, "ZERO SUGAR - FLAVOUR", FRONT_CENTER, 1106, 7);
+  drawWordmark(context, product, FRONT_CENTER, 1046, 216);
 
-  context.fillStyle = "rgba(255, 255, 255, 0.32)";
-  context.font = `500 18px ${font}`;
-  drawSpacedText(context, "500 ML", FRONT_CENTER, 1160, 9);
-
-  context.save();
-  context.fillStyle = "rgba(255, 255, 255, 0.32)";
-  for (let index = 0; index < 20; index += 1) {
-    const width = 3 + Math.floor(random() * 5);
-    const height = 18 + Math.floor(random() * 44);
-    context.fillRect(580 + index * 10, 266, width, height);
-  }
-  context.restore();
-
-  context.save();
-  context.strokeStyle = "rgba(230, 255, 150, 0.35)";
-  context.lineWidth = 2;
-  context.beginPath();
-  context.moveTo(FRONT_CENTER - 250, 990);
-  context.lineTo(FRONT_CENTER - 100, 990);
-  context.moveTo(FRONT_CENTER + 100, 990);
-  context.lineTo(FRONT_CENTER + 250, 990);
-  context.stroke();
-  context.restore();
+  context.fillStyle = "rgba(238, 238, 230, 0.82)";
+  context.font = `600 27px ${font}`;
+  context.textAlign = "center";
+  context.textBaseline = "middle";
+  drawSpacedText(context, "ENERGY DRINK", FRONT_CENTER, 1110, 20);
 }
 
 function drawBackPanel(
@@ -377,40 +549,39 @@ function drawBackPanel(
   context.translate(centerX, 0);
   context.scale(-1, 1);
 
-  drawWordmark(context, product, 0, 548, 176, true);
-
-  context.fillStyle = "rgba(236, 236, 228, 0.7)";
-  context.font = `600 27px ${font}`;
+  context.fillStyle = "rgba(236, 238, 228, 0.45)";
+  context.font = `600 18px ${font}`;
   context.textAlign = "center";
   context.textBaseline = "middle";
-  drawSpacedText(context, "FULL VOLTAGE", 0, 646, 18);
+  drawSpacedText(context, "FULL VOLTAGE", 0, 250, 12);
 
-  drawEmblem(context, product, 0, 890, {
-    scaleX: 0.92,
-    scaleY: 0.86,
-    glow: 0.7,
-  });
-
-  context.fillStyle = "rgba(255, 255, 255, 0.78)";
-  context.font = `500 24px ${font}`;
-  drawSpacedText(context, "ZERO SUGAR - FLAVOUR", 0, 1120, 7);
+  context.fillStyle = "rgba(255, 255, 255, 0.3)";
+  context.font = `500 15px ${font}`;
+  drawSpacedText(context, "ZERO SUGAR · 500 ML", 0, 1080, 6);
+  drawSpacedText(context, product.flavor.toUpperCase(), 0, 1116, 6);
 
   context.restore();
 }
 
-export function createLabelTexture(product: ProductConfig) {
+export function createLabelTexture(
+  product: ProductConfig,
+  resolutionScale = 1,
+) {
   if (typeof document === "undefined") {
     throw new Error("Can label textures can only be generated in the browser.");
   }
 
+  const scale = Math.min(1, Math.max(0.35, resolutionScale));
   const canvas = document.createElement("canvas");
-  canvas.width = TEXTURE_WIDTH;
-  canvas.height = TEXTURE_HEIGHT;
+  canvas.width = Math.round(TEXTURE_WIDTH * scale);
+  canvas.height = Math.round(TEXTURE_HEIGHT * scale);
   const context = canvas.getContext("2d");
 
   if (!context) {
     throw new Error("Canvas 2D is unavailable.");
   }
+
+  context.scale(scale, scale);
 
   const random = mulberry32(product.id.length * 91871 + 37);
 
@@ -424,59 +595,86 @@ export function createLabelTexture(product: ProductConfig) {
 
   const energyWash = context.createRadialGradient(
     FRONT_CENTER,
-    840,
+    560,
     120,
     FRONT_CENTER,
-    840,
-    760,
+    560,
+    680,
   );
-  energyWash.addColorStop(0, "rgba(120, 220, 0, 0.1)");
+  energyWash.addColorStop(0, colorWithAlpha(product.palette.glow, 0.025));
   energyWash.addColorStop(1, "rgba(0, 0, 0, 0)");
   context.fillStyle = energyWash;
   context.fillRect(0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
-  const backWash = context.createRadialGradient(
-    0,
-    880,
-    80,
-    0,
-    880,
-    620,
-  );
-  backWash.addColorStop(0, "rgba(120, 220, 0, 0.08)");
+  const backWash = context.createRadialGradient(0, 580, 80, 0, 580, 600);
+  backWash.addColorStop(0, colorWithAlpha(product.palette.glow, 0.02));
   backWash.addColorStop(1, "rgba(0, 0, 0, 0)");
   context.fillStyle = backWash;
   context.fillRect(0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
-  context.save();
-  context.strokeStyle = "rgba(196, 255, 0, 0.16)";
-  context.lineWidth = 2;
-  context.beginPath();
-  context.moveTo(0, 138);
-  context.lineTo(TEXTURE_WIDTH, 138);
-  context.moveTo(0, 1218);
-  context.lineTo(TEXTURE_WIDTH, 1218);
-  context.stroke();
-  context.restore();
-
   drawBackPanel(context, product, 0);
   drawBackPanel(context, product, TEXTURE_WIDTH);
-  drawFrontPanel(context, product, random);
+  drawFrontPanel(context, product);
 
-  for (let index = 0; index < 520; index += 1) {
-    const x = random() * TEXTURE_WIDTH;
-    const y = 100 + random() * (TEXTURE_HEIGHT - 200);
-    const radius = 0.6 + random() * 4.6;
-    const alpha = 0.04 + random() * 0.18;
+  for (let index = 0; index < 300; index += 1) {
+    const clustered = random() < 0.68;
+    const x = clustered
+      ? FRONT_CENTER + (random() - 0.5) * 780
+      : random() * TEXTURE_WIDTH;
+    const y = clustered
+      ? 560 + (random() - 0.5) * 700
+      : 140 + random() * (TEXTURE_HEIGHT - 280);
+    const radius = 0.5 + random() * 2.4;
+    const alpha = 0.05 + random() * 0.18;
 
     context.beginPath();
     context.fillStyle =
-      index % 13 === 0
-        ? `rgba(255, 255, 255, ${alpha + 0.14})`
-        : `rgba(205, 255, 205, ${alpha})`;
-    context.ellipse(x, y, radius, radius * (1 + random()), 0, 0, Math.PI * 2);
+      index % 9 === 0
+        ? `rgba(255, 255, 255, ${alpha + 0.18})`
+        : `rgba(230, 255, 238, ${alpha})`;
+    context.ellipse(x, y, radius, radius * (1.2 + random() * 0.8), 0, 0, Math.PI * 2);
     context.fill();
   }
+
+  for (let index = 0; index < 104; index += 1) {
+    const clustered = random() < 0.74;
+    const x = clustered
+      ? FRONT_CENTER + (random() - 0.5) * 720
+      : 140 + random() * (TEXTURE_WIDTH - 280);
+    const y = clustered
+      ? 540 + (random() - 0.5) * 620
+      : 170 + random() * (TEXTURE_HEIGHT - 340);
+    const radius = 1.1 + random() * 3.4;
+
+    drawDewDrop(context, x, y, radius, 0.3 + random() * 0.42);
+  }
+
+  for (let index = 0; index < 16; index += 1) {
+    const x = FRONT_CENTER + (random() - 0.5) * 620;
+    const y = 520 + (random() - 0.5) * 540;
+    const radius = 4 + random() * 3.4;
+
+    drawDewDrop(context, x, y, radius, 0.46 + random() * 0.28);
+  }
+
+  context.save();
+  for (let index = 0; index < 22; index += 1) {
+    const x = 200 + random() * (TEXTURE_WIDTH - 400);
+    const y = 200 + random() * (TEXTURE_HEIGHT - 400);
+    const length = 40 + random() * 180;
+
+    const streak = context.createLinearGradient(x, y, x, y + length);
+    streak.addColorStop(0, "rgba(255, 255, 255, 0)");
+    streak.addColorStop(0.5, `rgba(238, 255, 240, ${0.05 + random() * 0.09})`);
+    streak.addColorStop(1, "rgba(255, 255, 255, 0)");
+    context.strokeStyle = streak;
+    context.lineWidth = 1 + random() * 2.4;
+    context.beginPath();
+    context.moveTo(x, y);
+    context.lineTo(x + (random() - 0.5) * 8, y + length);
+    context.stroke();
+  }
+  context.restore();
 
   for (let index = 0; index < 160; index += 1) {
     const x = random() * TEXTURE_WIDTH;
