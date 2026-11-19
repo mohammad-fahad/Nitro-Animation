@@ -55,24 +55,23 @@ function createDrops(count: number, seed: number): Drop[] {
 export function DewDrops({ count = 46, seed = 11 }: { count?: number; seed?: number }) {
   const meshRef = useRef<THREE.InstancedMesh>(null);
 
-  const geometry = useMemo(() => new THREE.SphereGeometry(1, 10, 8), []);
+  const geometry = useMemo(() => new THREE.SphereGeometry(1, 24, 16), []);
 
   const material = useMemo(
     () =>
       new THREE.MeshPhysicalMaterial({
         color: "#e8fff2",
-        metalness: 0.04,
-        roughness: 0.03,
+        metalness: 0,
+        roughness: 0.02,
         clearcoat: 1,
-        clearcoatRoughness: 0.02,
-        envMapIntensity: 2.1,
+        clearcoatRoughness: 0.04,
+        envMapIntensity: 1.6,
         transparent: true,
-        opacity: 0.48,
+        opacity: 0.55,
         depthWrite: false,
         ior: 1.33,
-        sheen: 0.4,
-        sheenColor: new THREE.Color("#ffffff"),
-        sheenRoughness: 0.12,
+        transmission: 0.92,
+        side: THREE.DoubleSide,
       }),
     [],
   );
