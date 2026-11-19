@@ -15,13 +15,15 @@ const CanExperience = dynamic(
 export function CanStage({
   product = greenProduct,
   className = "",
+  lineup = false,
 }: {
   product?: ProductConfig;
   className?: string;
+  lineup?: boolean;
 }) {
   return (
     <div className={`absolute inset-0 ${className}`}>
-      <CanExperience product={product} />
+      <CanExperience product={product} lineup={lineup} />
     </div>
   );
 }

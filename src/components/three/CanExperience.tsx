@@ -78,8 +78,10 @@ function hasWebGLSupport() {
 
 export function CanExperience({
   product = greenProduct,
+  lineup = false,
 }: {
   product?: ProductConfig;
+  lineup?: boolean;
 }) {
   const [status] = useState<"ready" | "unsupported">(() =>
     hasWebGLSupport() ? "ready" : "unsupported",
@@ -107,7 +109,7 @@ export function CanExperience({
         }}
       >
         <Suspense fallback={null}>
-          <Experience product={product} />
+          <Experience product={product} lineup={lineup} />
         </Suspense>
       </Canvas>
     </CanvasErrorBoundary>
