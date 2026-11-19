@@ -129,79 +129,6 @@ function drawArc(
   context.restore();
 }
 
-function drawDewDrop(
-  context: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  radius: number,
-  alpha: number,
-) {
-  context.save();
-
-  const shadow = context.createRadialGradient(
-    x,
-    y + radius * 0.5,
-    radius * 0.2,
-    x,
-    y + radius * 0.5,
-    radius * 1.8,
-  );
-  shadow.addColorStop(0, `rgba(0, 0, 0, ${0.42 * alpha})`);
-  shadow.addColorStop(0.6, `rgba(0, 0, 0, ${0.16 * alpha})`);
-  shadow.addColorStop(1, "rgba(0, 0, 0, 0)");
-  context.fillStyle = shadow;
-  context.beginPath();
-  context.ellipse(
-    x,
-    y + radius * 0.5,
-    radius * 1.55,
-    radius * 0.95,
-    0,
-    0,
-    Math.PI * 2,
-  );
-  context.fill();
-
-  const body = context.createRadialGradient(
-    x - radius * 0.38,
-    y - radius * 0.45,
-    radius * 0.08,
-    x,
-    y,
-    radius * 1.18,
-  );
-  body.addColorStop(0, `rgba(255, 255, 255, ${0.95 * alpha})`);
-  body.addColorStop(0.22, `rgba(238, 255, 240, ${0.62 * alpha})`);
-  body.addColorStop(0.52, `rgba(190, 232, 178, ${0.3 * alpha})`);
-  body.addColorStop(0.82, `rgba(22, 48, 16, ${0.34 * alpha})`);
-  body.addColorStop(1, `rgba(235, 255, 235, ${0.36 * alpha})`);
-  context.fillStyle = body;
-  context.beginPath();
-  context.ellipse(x, y, radius, radius * 1.22, 0, 0, Math.PI * 2);
-  context.fill();
-
-  context.fillStyle = `rgba(255, 255, 255, ${0.9 * alpha})`;
-  context.beginPath();
-  context.ellipse(
-    x - radius * 0.32,
-    y - radius * 0.46,
-    radius * 0.22,
-    radius * 0.14,
-    -0.5,
-    0,
-    Math.PI * 2,
-  );
-  context.fill();
-
-  context.strokeStyle = `rgba(240, 255, 230, ${0.3 * alpha})`;
-  context.lineWidth = Math.max(0.6, radius * 0.08);
-  context.beginPath();
-  context.ellipse(x, y, radius * 0.94, radius * 1.16, 0, 0, Math.PI * 2);
-  context.stroke();
-
-  context.restore();
-}
-
 function drawEmblem(
   context: CanvasRenderingContext2D,
   product: ProductConfig,
@@ -583,8 +510,6 @@ export function createLabelTexture(
 
   context.scale(scale, scale);
 
-  const random = mulberry32(product.id.length * 91871 + 37);
-
   const base = context.createLinearGradient(0, 0, 0, TEXTURE_HEIGHT);
   base.addColorStop(0, "#030303");
   base.addColorStop(0.42, "#080808");
@@ -615,73 +540,6 @@ export function createLabelTexture(
   drawBackPanel(context, product, 0);
   drawBackPanel(context, product, TEXTURE_WIDTH);
   drawFrontPanel(context, product);
-
-  for (let index = 0; index < 300; index += 1) {
-    const clustered = random() < 0.68;
-    const x = clustered
-      ? FRONT_CENTER + (random() - 0.5) * 780
-      : random() * TEXTURE_WIDTH;
-    const y = clustered
-      ? 560 + (random() - 0.5) * 700
-      : 140 + random() * (TEXTURE_HEIGHT - 280);
-    const radius = 0.5 + random() * 2.4;
-    const alpha = 0.05 + random() * 0.18;
-
-    context.beginPath();
-    context.fillStyle =
-      index % 9 === 0
-        ? `rgba(255, 255, 255, ${alpha + 0.18})`
-        : `rgba(230, 255, 238, ${alpha})`;
-    context.ellipse(x, y, radius, radius * (1.2 + random() * 0.8), 0, 0, Math.PI * 2);
-    context.fill();
-  }
-
-  for (let index = 0; index < 104; index += 1) {
-    const clustered = random() < 0.74;
-    const x = clustered
-      ? FRONT_CENTER + (random() - 0.5) * 720
-      : 140 + random() * (TEXTURE_WIDTH - 280);
-    const y = clustered
-      ? 540 + (random() - 0.5) * 620
-      : 170 + random() * (TEXTURE_HEIGHT - 340);
-    const radius = 1.1 + random() * 3.4;
-
-    drawDewDrop(context, x, y, radius, 0.3 + random() * 0.42);
-  }
-
-  for (let index = 0; index < 16; index += 1) {
-    const x = FRONT_CENTER + (random() - 0.5) * 620;
-    const y = 520 + (random() - 0.5) * 540;
-    const radius = 4 + random() * 3.4;
-
-    drawDewDrop(context, x, y, radius, 0.46 + random() * 0.28);
-  }
-
-  context.save();
-  for (let index = 0; index < 22; index += 1) {
-    const x = 200 + random() * (TEXTURE_WIDTH - 400);
-    const y = 200 + random() * (TEXTURE_HEIGHT - 400);
-    const length = 40 + random() * 180;
-
-    const streak = context.createLinearGradient(x, y, x, y + length);
-    streak.addColorStop(0, "rgba(255, 255, 255, 0)");
-    streak.addColorStop(0.5, `rgba(238, 255, 240, ${0.05 + random() * 0.09})`);
-    streak.addColorStop(1, "rgba(255, 255, 255, 0)");
-    context.strokeStyle = streak;
-    context.lineWidth = 1 + random() * 2.4;
-    context.beginPath();
-    context.moveTo(x, y);
-    context.lineTo(x + (random() - 0.5) * 8, y + length);
-    context.stroke();
-  }
-  context.restore();
-
-  for (let index = 0; index < 160; index += 1) {
-    const x = random() * TEXTURE_WIDTH;
-    const y = 100 + random() * (TEXTURE_HEIGHT - 200);
-    context.fillStyle = `rgba(255, 255, 255, ${0.035 + random() * 0.1})`;
-    context.fillRect(x, y, 1 + random() * 2, 1 + random() * 2);
-  }
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;

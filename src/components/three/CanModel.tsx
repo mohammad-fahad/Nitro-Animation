@@ -9,24 +9,24 @@ import type { ProductConfig } from "@/types/product";
 
 const BODY_RADIUS = 0.72;
 const BODY_TOP = 1.516;
-const BODY_BOTTOM = -1.738;
+const BODY_BOTTOM = -1.76;
 
 function createBodyProfile() {
   const profile = [
     [0, -2.157],
-    [0.324, -2.157],
-    [0.477, -2.136],
-    [0.594, -2.083],
-    [0.675, -2.003],
-    [0.711, -1.897],
+    [0.40, -2.157],
+    [0.54, -2.115],
+    [0.63, -2.035],
+    [0.69, -1.925],
+    [0.714, -1.825],
     [BODY_RADIUS, BODY_BOTTOM],
     [BODY_RADIUS, BODY_TOP],
-    [0.7155, 1.632],
-    [0.6975, 1.738],
-    [0.6615, 1.866],
-    [0.5985, 1.993],
-    [0.5355, 2.072],
-    [0.5175, 2.125],
+    [0.716, 1.595],
+    [0.698, 1.705],
+    [0.662, 1.835],
+    [0.60, 1.965],
+    [0.548, 2.055],
+    [0.528, 2.095],
   ];
 
   return profile.map(([x, y]) => new THREE.Vector2(x, y));
@@ -198,7 +198,7 @@ export function CanModel({
       />
 
       <mesh
-        position={[0, 2.128, 0]}
+        position={[0, 2.098, 0]}
         rotation={[Math.PI / 2, 0, 0]}
         material={aluminumMaterial}
       >
@@ -214,7 +214,7 @@ export function CanModel({
       </mesh>
 
       <mesh
-        position={[0, 2.116, 0]}
+        position={[0, 2.086, 0]}
         rotation={[-Math.PI / 2, 0, 0]}
         material={lidMaterial}
       >
@@ -222,7 +222,7 @@ export function CanModel({
       </mesh>
 
       <mesh
-        position={[0, 2.123, 0]}
+        position={[0, 2.093, 0]}
         rotation={[-Math.PI / 2, 0, 0]}
         material={aluminumMaterial}
       >
@@ -230,7 +230,7 @@ export function CanModel({
       </mesh>
 
       <mesh
-        position={[0, 2.136, 0.018]}
+        position={[0, 2.106, 0.018]}
         rotation={[-Math.PI / 2, 0, 0.24]}
         material={aluminumMaterial}
       >
@@ -238,7 +238,7 @@ export function CanModel({
       </mesh>
 
       <mesh
-        position={[0, 2.139, -0.09]}
+        position={[0, 2.109, -0.09]}
         rotation={[-Math.PI / 2, 0, 0.1]}
         material={lidMaterial}
       >

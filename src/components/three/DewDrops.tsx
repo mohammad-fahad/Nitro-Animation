@@ -26,20 +26,26 @@ function createDrops(count: number, seed: number): Drop[] {
   const drops: Drop[] = [];
 
   for (let index = 0; index < count; index += 1) {
-    const frontal = index % 5 !== 0;
+    // Most droplets sit on the camera-facing half of the can.
+    const frontal = random() < 0.75;
     const angle = frontal
-      ? (random() - 0.5) * 1.45
+      ? Math.PI + (random() - 0.5) * 1.6
       : random() * Math.PI * 2;
-    const focus = random() < 0.55;
-    const y = focus
-      ? -0.5 + (random() - 0.5) * 1.9
-      : -1.85 + random() * 3.7;
+
+    // Cluster around the logo band, sparse elsewhere on the straight body.
+    const logoBand = random() < 0.6;
+    const y = logoBand
+      ? -0.55 + (random() - 0.5) * 1.5
+      : -1.7 + random() * 3.15;
+
+    // Bias heavily toward small droplets, with a few large ones.
+    const size = Math.pow(random(), 2.2);
 
     drops.push({
       angle,
-      y,
-      radius: 0.0055 + Math.pow(random(), 1.7) * 0.019,
-      stretch: 1.05 + random() * 0.5,
+      y: Math.min(Math.max(y, -1.68), 1.48),
+      radius: 0.0045 + size * 0.021,
+      stretch: 1.0 + size * 0.55,
     });
   }
 

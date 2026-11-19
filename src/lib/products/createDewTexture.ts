@@ -136,19 +136,6 @@ function createDewTextures(): DewTextures {
 
   normalContext.putImageData(normalImage, 0, 0);
 
-  alphaContext.save();
-  for (let index = 0; index < 140; index += 1) {
-    const x = random() * SIZE;
-    const y = random() * SIZE;
-    const radius = 0.4 + random() * 1.3;
-
-    alphaContext.fillStyle = `rgba(255, 255, 255, ${0.18 + random() * 0.32})`;
-    alphaContext.beginPath();
-    alphaContext.arc(x, y, radius, 0, Math.PI * 2);
-    alphaContext.fill();
-  }
-  alphaContext.restore();
-
   const alpha = new THREE.CanvasTexture(alphaCanvas);
   alpha.wrapS = THREE.RepeatWrapping;
   alpha.wrapT = THREE.RepeatWrapping;
