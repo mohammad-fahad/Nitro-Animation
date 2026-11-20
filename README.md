@@ -3,22 +3,6 @@
 A scroll-driven NITRO Energy Drink product experience built with Next.js, React
 Three Fiber, and GSAP.
 
-## Current milestone
-
-Batch 2 delivers the responsive hero and interactive single-can milestone:
-
-- desktop and mobile hero compositions
-- scroll-driven can rotation, scale, and camera motion
-- procedural studio lighting and reflections
-- supplied can label artwork with per-flavour hue treatment
-- transparent 3D condensation droplets
-- reduced-motion support and a WebGL fallback
-- `/can-lab` review route for can orientation, spin, scale, and offset checks
-
-Label textures are generated in `src/lib/products/createLabelTexture.ts` from
-the supplied three-panel artwork, with per-flavour hues matching the SVGs in
-`.review/`. The runtime label asset is `public/images/nitro-label.jpg`.
-
 ## Stack
 
 - Next.js 16.4.6 (App Router, Turbopack)
