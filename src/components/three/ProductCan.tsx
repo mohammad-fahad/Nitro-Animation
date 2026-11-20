@@ -9,10 +9,8 @@ import type { ProductConfig } from "@/types/product";
 
 export function ProductCan({
   product,
-  dewCount = 56,
 }: {
   product: ProductConfig;
-  dewCount?: number;
 }) {
   const rootRef = useRef<THREE.Group>(null);
   const orientationRef = useRef<THREE.Group>(null);
@@ -37,7 +35,7 @@ export function ProductCan({
     <group ref={rootRef}>
       <group ref={orientationRef}>
         <group ref={spinRef}>
-          <CanModel product={product} dewCount={dewCount} />
+          <CanModel product={product} />
         </group>
       </group>
     </group>

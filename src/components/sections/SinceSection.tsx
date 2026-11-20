@@ -18,7 +18,7 @@ export function SinceSection() {
             alt=""
             fill
             sizes="(min-width: 768px) 56vw, 100vw"
-            className="object-cover object-[center_68%] grayscale contrast-125 brightness-[0.82]"
+            className="object-contain object-center grayscale contrast-125 brightness-[0.82]"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent md:bg-gradient-to-r md:from-black/5 md:via-black/25 md:to-black/80" />
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,rgba(0,0,0,0.65)_100%)]" />

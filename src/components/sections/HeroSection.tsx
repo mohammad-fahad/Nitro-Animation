@@ -18,7 +18,7 @@ export function HeroSection() {
       <div
         data-hero-wordmark
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-[44%] z-10 hidden select-none md:block"
+        className="pointer-events-none absolute inset-x-0 top-[37%] z-10 select-none md:top-[44%]"
       >
         <div className="-translate-y-1/2 text-center will-change-transform">
           <span className="display-wordmark inline-block whitespace-nowrap">
@@ -32,7 +32,7 @@ export function HeroSection() {
         className="pointer-events-none absolute inset-x-0 bottom-0 z-30 px-6 pb-8 sm:px-10 lg:px-16 lg:pb-10"
       >
         <div className="pointer-events-auto mx-auto grid max-w-[1800px] grid-cols-1 items-end gap-6 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
-          <p className="hidden max-w-[330px] text-[10px] font-medium uppercase leading-5 tracking-[0.17em] text-white/42 md:block">
+          <p className="mx-auto max-w-[330px] text-center text-[10px] font-medium uppercase leading-5 tracking-[0.17em] text-white/42 md:mx-0 md:text-left">
             Zero sugar. Full voltage. Engineered for the nights that refuse to
             slow down.
           </p>

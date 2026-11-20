@@ -109,13 +109,19 @@ button {
 .display-wordmark {
   display: inline-block;
   font-family: var(--font-archivo-black), "Arial Black", sans-serif;
-  font-size: clamp(8.6rem, 26.5vw, 44rem);
+  font-size: clamp(4.6rem, 21vw, 9rem);
   font-style: italic;
   font-weight: 400;
   letter-spacing: -0.055em;
   line-height: 0.76;
   color: #e3ea00;
   transform: translateX(-0.151em);
+}
+
+@media (min-width: 768px) {
+  .display-wordmark {
+    font-size: clamp(8.6rem, 26.5vw, 44rem);
+  }
 }
 
 .since-headline {
