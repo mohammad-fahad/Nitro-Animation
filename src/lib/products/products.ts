@@ -11,7 +11,7 @@ export const products: ProductConfig[] = [
       accentBright: "#ffe86a",
       glow: "#ffb800",
     },
-    artworkSource: "procedural-provisional",
+    labelTexture: "/images/nitro-label.jpg",
   },
   {
     id: "red",
@@ -23,7 +23,7 @@ export const products: ProductConfig[] = [
       accentBright: "#ff9a84",
       glow: "#ff2a12",
     },
-    artworkSource: "procedural-provisional",
+    labelTexture: "/images/nitro-label.jpg",
   },
   {
     id: "green",
@@ -35,7 +35,7 @@ export const products: ProductConfig[] = [
       accentBright: "#e3ea00",
       glow: "#8aff00",
     },
-    artworkSource: "procedural-provisional",
+    labelTexture: "/images/nitro-label.jpg",
   },
   {
     id: "sky",
@@ -47,7 +47,7 @@ export const products: ProductConfig[] = [
       accentBright: "#c5f3ff",
       glow: "#37c8ff",
     },
-    artworkSource: "procedural-provisional",
+    labelTexture: "/images/nitro-label.jpg",
   },
   {
     id: "blue",
@@ -59,7 +59,7 @@ export const products: ProductConfig[] = [
       accentBright: "#94b7ff",
       glow: "#1e4dff",
     },
-    artworkSource: "procedural-provisional",
+    labelTexture: "/images/nitro-label.jpg",
   },
 ];
 

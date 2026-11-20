@@ -113,7 +113,7 @@ export function CanLabClient() {
           <div className="pointer-events-none absolute left-5 top-5 z-10 flex items-center gap-3">
             <span className="size-1.5 rounded-full bg-nitro-yellow shadow-[0_0_14px_#e3ea00]" />
             <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/55">
-              NITRO Green / provisional label
+              NITRO Green / supplied label artwork
             </span>
           </div>
 
@@ -222,9 +222,9 @@ export function CanLabClient() {
           </button>
 
           <p className="mt-6 border-t border-white/10 pt-5 text-[10px] leading-5 text-white/32">
-            Artwork is a procedural provisional label built from recovered
-            reference crops. A verified original label texture slot remains
-            available in the product configuration.
+            Label artwork is derived from the supplied SVG assets. Gold, Red,
+            Green, Sky, and Blue share the source label with per-flavour hue
+            treatment; condensation is rendered as transparent 3D droplets.
           </p>
         </aside>
       </div>

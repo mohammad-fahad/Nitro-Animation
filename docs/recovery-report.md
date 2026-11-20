@@ -28,9 +28,10 @@ Three.js milestone.
 - Responsive navigation, hero, CTA row, and social links matching the recovered
   desktop composition.
 - Scroll-driven GSAP/ScrollTrigger hero timeline.
-- React Three Fiber scene with a procedural NITRO can:
+- React Three Fiber scene with a NITRO can built from supplied artwork:
   - lathe body, cylindrical label sleeve, aluminum rims, lid, and pull tab
-  - front/back provisional label artwork with condensation and lightning detail
+  - label texture derived from the supplied SVG artwork with per-flavour hues
+  - transparent 3D condensation droplets
   - studio lighting from a procedural environment, green accents, and reflections
 - Responsive camera framing for desktop, tablet, and narrow mobile viewports.
 - Reduced-motion support and a WebGL-unavailable fallback.
@@ -49,8 +50,6 @@ Three.js milestone.
 
 ## Known gaps
 
-- The can label is procedural and provisional; original label artwork is still
-  required.
 - Navigation targets `#shop`, `#about`, `#gallery`, and `#contact` are placeholders
   for sections not yet built.
 - The five product variants are configured but only the Green can is selectable

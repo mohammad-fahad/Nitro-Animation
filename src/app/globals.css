@@ -23,7 +23,24 @@
 
 html {
   background: var(--background);
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis:not(.lenis-autoToggle).lenis-stopped {
+  overflow: clip;
+}
+
+.lenis [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
 }
 
 body {
@@ -104,18 +121,6 @@ button {
     transparent 42%,
     rgba(0, 0, 0, 0.55) 100%
   );
-}
-
-.display-wordmark {
-  display: inline-block;
-  font-family: var(--font-archivo-black), "Arial Black", sans-serif;
-  font-size: clamp(8rem, 25.7vw, 42rem);
-  font-style: italic;
-  font-weight: 400;
-  letter-spacing: -0.055em;
-  line-height: 0.76;
-  color: #e3ea00;
-  transform: translateX(-0.151em);
 }
 
 .since-headline {

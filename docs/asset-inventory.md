@@ -34,18 +34,21 @@ from the original references and are not source assets.
 
 ## Artwork status
 
-No original NITRO label artwork or layered source file was recovered. The can
-label currently uses a procedural, provisional texture generated in
-`src/lib/products/createLabelTexture.ts`.
+The supplied NITRO SVGs live in `.review/`. Each SVG embeds the same silver-can
+and three-panel label images; the flavour variants differ by hue overlay. The
+runtime label asset is extracted into `public/images/nitro-label.jpg`.
 
-The production-ready replacement path is already reserved:
+`src/lib/products/createLabelTexture.ts` crops the middle label panel, applies
+the flavour hue, and boosts label contrast. `src/components/three/CanModel.tsx`
+maps the result to the can and adds transparent 3D condensation droplets.
+
+Product configuration remains the source of truth:
 
 - `ProductConfig.labelTexture` (`src/types/product.ts`)
-- `ProductConfig.artworkSource` distinguishes `"procedural-provisional"` from
-  `"provided"` in `src/lib/products/products.ts`
+- label paths for all five flavours in `src/lib/products/products.ts`
 
-A supplied label texture should be treated as the source of truth for emblem
-geometry, typography, gradients, condensation detail, and back-panel layout.
+The supplied artwork is the source of truth for emblem geometry, typography,
+gradients, condensation detail, and back-panel layout.
 
 ## Verification captures
 

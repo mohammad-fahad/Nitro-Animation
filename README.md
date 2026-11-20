@@ -10,12 +10,14 @@ Batch 2 delivers the responsive hero and interactive single-can milestone:
 - desktop and mobile hero compositions
 - scroll-driven can rotation, scale, and camera motion
 - procedural studio lighting and reflections
-- provisional front/back can label
+- supplied can label artwork with per-flavour hue treatment
+- transparent 3D condensation droplets
 - reduced-motion support and a WebGL fallback
 - `/can-lab` review route for can orientation, spin, scale, and offset checks
 
-The label artwork is procedural and provisional. The original label asset is
-still required; `ProductConfig.labelTexture` is the reserved replacement path.
+Label textures are generated in `src/lib/products/createLabelTexture.ts` from
+the supplied three-panel artwork, with per-flavour hues matching the SVGs in
+`.review/`. The runtime label asset is `public/images/nitro-label.jpg`.
 
 ## Stack
 
@@ -56,10 +58,10 @@ src/components/layout/      navigation and social links
 src/components/sections/    hero section and scroll timeline
 src/components/three/       canvas, can, lighting, camera, lab UI
 src/lib/animation/          shared scroll-driven experience state
-src/lib/products/           product configs and procedural label texture
+src/lib/products/           product configs and label texture treatment
 src/types/                  shared product and orientation types
 .ref/                       recovered visual references (preserve)
-.review/                    local verification screenshots
+.review/                    supplied SVG artwork and review captures
 docs/                       asset inventory and recovery report
 ```
 

@@ -10,7 +10,6 @@ export interface ProductConfig {
   flavor: string;
   priceUsd: number;
   palette: ProductPalette;
-  artworkSource: "procedural-provisional" | "provided";
   labelTexture?: string;
 }
 

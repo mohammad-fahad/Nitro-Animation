@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { Archivo_Black, Orbitron, Poppins } from "next/font/google";
+import { SmoothScroll } from "@/components/layout/SmoothScroll";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -48,6 +49,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         suppressHydrationWarning
         className="min-h-full bg-nitro-black text-white"
       >
+        <SmoothScroll />
         {children}
       </body>
     </html>

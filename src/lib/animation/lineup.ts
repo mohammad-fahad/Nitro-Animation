@@ -1,4 +1,4 @@
-export const CAN_BASE_LOCAL_Y = -2.157;
+export const CAN_BASE_LOCAL_Y = -1.826;
 
 export const LINEUP_BASE_Y = -2.5;
 export const LINEUP_GREEN_SCALE = 1.22;

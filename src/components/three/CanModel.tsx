@@ -1,32 +1,45 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
+import { useLoader } from "@react-three/fiber";
 import * as THREE from "three";
 import { DewDrops } from "@/components/three/DewDrops";
-import { getDewTextures } from "@/lib/products/createDewTexture";
-import { createLabelTexture } from "@/lib/products/createLabelTexture";
+import {
+  createLabelTexture,
+  LABEL_ARTWORK_URL,
+} from "@/lib/products/createLabelTexture";
 import type { ProductConfig } from "@/types/product";
 
-const BODY_RADIUS = 0.72;
-const BODY_TOP = 1.516;
-const BODY_BOTTOM = -1.738;
+const CAN_RADIUS = 0.715;
+const CAN_TOP = 1.886;
+const CAN_BOTTOM = -1.826;
+const BODY_TOP = 1.5;
+const LABEL_TOP = 1.49;
+const LABEL_BOTTOM = -1.6;
+const LABEL_HEIGHT = LABEL_TOP - LABEL_BOTTOM;
+const LABEL_CENTER_Y = (LABEL_TOP + LABEL_BOTTOM) / 2;
+const LABEL_RADIUS = CAN_RADIUS + 0.0015;
+const NECK_RADIUS = 0.542;
 
 function createBodyProfile() {
-  const profile = [
-    [0, -2.157],
-    [0.324, -2.157],
-    [0.477, -2.136],
-    [0.594, -2.083],
-    [0.675, -2.003],
-    [0.711, -1.897],
-    [BODY_RADIUS, BODY_BOTTOM],
-    [BODY_RADIUS, BODY_TOP],
-    [0.7155, 1.632],
-    [0.6975, 1.738],
-    [0.6615, 1.866],
-    [0.5985, 1.993],
-    [0.5355, 2.072],
-    [0.5175, 2.125],
+  const profile: Array<[number, number]> = [
+    [0, -1.838],
+    [0.3, -1.834],
+    [0.42, -1.830],
+    [0.52, -1.818],
+    [0.59, -1.796],
+    [0.645, -1.730],
+    [0.685, -1.690],
+    [0.709, -1.662],
+    [0.719, -1.634],
+    [CAN_RADIUS, -1.606],
+    [CAN_RADIUS, BODY_TOP],
+    [0.695, BODY_TOP + 0.025],
+    [0.67, BODY_TOP + 0.065],
+    [0.64, BODY_TOP + 0.105],
+    [0.605, BODY_TOP + 0.145],
+    [0.58, BODY_TOP + 0.18],
+    [0.558, BODY_TOP + 0.216],
   ];
 
   return profile.map(([x, y]) => new THREE.Vector2(x, y));
@@ -35,16 +48,12 @@ function createBodyProfile() {
 export function CanModel({
   product,
   textureScale = 1,
-  dewCount = 40,
-  dewSeed = 11,
 }: {
   product: ProductConfig;
   textureScale?: number;
-  dewCount?: number;
-  dewSeed?: number;
 }) {
   const bodyGeometry = useMemo(() => {
-    const geometry = new THREE.LatheGeometry(createBodyProfile(), 96);
+    const geometry = new THREE.LatheGeometry(createBodyProfile(), 128);
     geometry.computeVertexNormals();
     return geometry;
   }, []);
@@ -52,10 +61,10 @@ export function CanModel({
   const labelGeometry = useMemo(
     () =>
       new THREE.CylinderGeometry(
-        0.726,
-        0.726,
-        3.14,
-        128,
+        LABEL_RADIUS,
+        LABEL_RADIUS,
+        LABEL_HEIGHT,
+        160,
         1,
         true,
         Math.PI,
@@ -64,83 +73,54 @@ export function CanModel({
     [],
   );
 
-  const labelTexture = useMemo(
-    () => createLabelTexture(product, textureScale),
-    [product, textureScale],
+  const artwork = useLoader(
+    THREE.TextureLoader,
+    product.labelTexture ?? LABEL_ARTWORK_URL,
   );
 
-  const dewTextures = useMemo(() => getDewTextures(), []);
+  const labelTextures = useMemo(
+    () => createLabelTexture(artwork.image, product, textureScale),
+    [artwork, product, textureScale],
+  );
 
   const labelMaterial = useMemo(
     () =>
       new THREE.MeshPhysicalMaterial({
-        map: labelTexture,
+        map: labelTextures.map,
+        emissiveMap: labelTextures.emissiveMap,
+        emissive: "#ffffff",
+        emissiveIntensity: 1.15,
         color: "#ffffff",
-        metalness: 0.32,
-        roughness: 0.26,
-        clearcoat: 0.8,
-        clearcoatRoughness: 0.18,
-        envMapIntensity: 0.85,
+        metalness: 0,
+        roughness: 0.62,
+        clearcoat: 0.1,
+        clearcoatRoughness: 0.56,
+        envMapIntensity: 0.28,
+        side: THREE.FrontSide,
       }),
-    [labelTexture],
+    [labelTextures],
   );
 
   const bodyMaterial = useMemo(
     () =>
       new THREE.MeshPhysicalMaterial({
-        color: "#050505",
-        metalness: 0.9,
-        roughness: 0.22,
-        clearcoat: 0.5,
-        clearcoatRoughness: 0.2,
-        envMapIntensity: 0.9,
+        color: "#000000",
+        metalness: 0.58,
+        roughness: 0.42,
+        clearcoat: 0.12,
+        clearcoatRoughness: 0.55,
+        envMapIntensity: 0.36,
       }),
     [],
-  );
-
-  const dewShellGeometry = useMemo(
-    () =>
-      new THREE.CylinderGeometry(
-        0.7305,
-        0.7305,
-        3.14,
-        128,
-        1,
-        true,
-        Math.PI,
-        Math.PI * 2,
-      ),
-    [],
-  );
-
-  const dewShellMaterial = useMemo(
-    () =>
-      new THREE.MeshPhysicalMaterial({
-        color: "#f4fbff",
-        metalness: 0.02,
-        roughness: 1,
-        transparent: true,
-        opacity: 1,
-        alphaMap: dewTextures.alpha,
-        normalMap: dewTextures.normal,
-        normalScale: new THREE.Vector2(0.72, 0.72),
-        roughnessMap: dewTextures.roughness,
-        clearcoat: 1,
-        clearcoatRoughness: 0.04,
-        ior: 1.333,
-        envMapIntensity: 2.4,
-        depthWrite: false,
-      }),
-    [dewTextures],
   );
 
   const aluminumMaterial = useMemo(
     () =>
       new THREE.MeshPhysicalMaterial({
-        color: "#c6c8c4",
+        color: "#cfd1cc",
         metalness: 1,
-        roughness: 0.26,
-        envMapIntensity: 1.1,
+        roughness: 0.22,
+        envMapIntensity: 1.25,
       }),
     [],
   );
@@ -148,10 +128,21 @@ export function CanModel({
   const lidMaterial = useMemo(
     () =>
       new THREE.MeshPhysicalMaterial({
-        color: "#a8aba5",
-        metalness: 0.96,
-        roughness: 0.34,
-        envMapIntensity: 0.95,
+        color: "#b4b7b0",
+        metalness: 0.97,
+        roughness: 0.28,
+        envMapIntensity: 1.2,
+      }),
+    [],
+  );
+
+  const darkMetalMaterial = useMemo(
+    () =>
+      new THREE.MeshPhysicalMaterial({
+        color: "#3a3b38",
+        metalness: 0.95,
+        roughness: 0.36,
+        envMapIntensity: 0.9,
       }),
     [],
   );
@@ -160,24 +151,23 @@ export function CanModel({
     return () => {
       bodyGeometry.dispose();
       labelGeometry.dispose();
-      labelTexture.dispose();
+      labelTextures.map.dispose();
+      labelTextures.emissiveMap.dispose();
       labelMaterial.dispose();
       bodyMaterial.dispose();
-      dewShellGeometry.dispose();
-      dewShellMaterial.dispose();
       aluminumMaterial.dispose();
       lidMaterial.dispose();
+      darkMetalMaterial.dispose();
     };
   }, [
     bodyGeometry,
     labelGeometry,
-    labelTexture,
+    labelTextures,
     labelMaterial,
     bodyMaterial,
-    dewShellGeometry,
-    dewShellMaterial,
     aluminumMaterial,
     lidMaterial,
+    darkMetalMaterial,
   ]);
 
   return (
@@ -187,73 +177,80 @@ export function CanModel({
       <mesh
         geometry={labelGeometry}
         material={labelMaterial}
-        position={[0, -0.09, 0]}
+        position={[0, LABEL_CENTER_Y, 0]}
       />
 
-      <mesh
-        geometry={dewShellGeometry}
-        material={dewShellMaterial}
-        position={[0, -0.09, 0]}
-        renderOrder={2}
-      />
+      <DewDrops />
 
       <mesh
-        position={[0, 2.128, 0]}
+        position={[0, 1.724, 0]}
+        material={aluminumMaterial}
+      >
+        <cylinderGeometry args={[NECK_RADIUS, NECK_RADIUS + 0.003, 0.162, 128, 1, true]} />
+      </mesh>
+
+      <mesh
+        position={[0, CAN_TOP - 0.012, 0]}
         rotation={[Math.PI / 2, 0, 0]}
         material={aluminumMaterial}
       >
-        <torusGeometry args={[0.512, 0.032, 20, 96]} />
+        <torusGeometry args={[NECK_RADIUS + 0.003, 0.018, 16, 128]} />
       </mesh>
 
       <mesh
-        position={[0, -2.104, 0]}
+        position={[0, CAN_TOP - 0.028, 0]}
+        rotation={[-Math.PI / 2, 0, 0]}
+        material={lidMaterial}
+      >
+        <circleGeometry args={[NECK_RADIUS - 0.004, 96]} />
+      </mesh>
+
+      <mesh
+        position={[0, CAN_TOP - 0.026, 0]}
+        rotation={[-Math.PI / 2, 0, 0]}
+        material={darkMetalMaterial}
+      >
+        <ringGeometry args={[0.372, 0.412, 96]} />
+      </mesh>
+
+      <mesh
+        position={[0, CAN_TOP - 0.027, 0]}
+        rotation={[-Math.PI / 2, 0, 0]}
+        material={lidMaterial}
+      >
+        <circleGeometry args={[0.372, 96]} />
+      </mesh>
+
+      <mesh
+        position={[0, CAN_TOP - 0.022, 0.088]}
+        material={darkMetalMaterial}
+      >
+        <boxGeometry args={[0.095, 0.014, 0.198]} />
+      </mesh>
+
+      <mesh
+        position={[0, CAN_TOP - 0.021, 0.172]}
+        rotation={[-Math.PI / 2, 0, 0]}
+        material={aluminumMaterial}
+      >
+        <torusGeometry args={[0.038, 0.006, 10, 32]} />
+      </mesh>
+
+      <mesh
+        position={[0, -1.806, 0]}
         rotation={[Math.PI / 2, 0, 0]}
-        material={aluminumMaterial}
+        material={darkMetalMaterial}
       >
-        <torusGeometry args={[0.592, 0.035, 20, 96]} />
+        <torusGeometry args={[NECK_RADIUS + 0.003, 0.018, 16, 128]} />
       </mesh>
 
       <mesh
-        position={[0, 2.116, 0]}
-        rotation={[-Math.PI / 2, 0, 0]}
-        material={lidMaterial}
-      >
-        <circleGeometry args={[0.504, 72]} />
-      </mesh>
-
-      <mesh
-        position={[0, 2.123, 0]}
-        rotation={[-Math.PI / 2, 0, 0]}
-        material={aluminumMaterial}
-      >
-        <ringGeometry args={[0.388, 0.46, 64]} />
-      </mesh>
-
-      <mesh
-        position={[0, 2.136, 0.018]}
-        rotation={[-Math.PI / 2, 0, 0.24]}
-        material={aluminumMaterial}
-      >
-        <torusGeometry args={[0.104, 0.022, 12, 40, Math.PI * 1.5]} />
-      </mesh>
-
-      <mesh
-        position={[0, 2.139, -0.09]}
-        rotation={[-Math.PI / 2, 0, 0.1]}
-        material={lidMaterial}
-      >
-        <boxGeometry args={[0.11, 0.2, 0.02]} />
-      </mesh>
-
-      <mesh
-        position={[0, -2.152, 0]}
+        position={[0, CAN_BOTTOM + 0.004, 0]}
         rotation={[Math.PI / 2, 0, 0]}
         material={bodyMaterial}
       >
-        <circleGeometry args={[0.324, 48]} />
+        <circleGeometry args={[0.345, 64]} />
       </mesh>
-
-      <DewDrops count={dewCount} seed={dewSeed} />
     </group>
   );
 }

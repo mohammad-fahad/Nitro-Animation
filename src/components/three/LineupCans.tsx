@@ -95,12 +95,7 @@ function LineupCan({
 
   return (
     <group ref={groupRef} visible={false}>
-      <CanModel
-        product={product}
-        textureScale={0.5}
-        dewCount={20}
-        dewSeed={product.id.length * 41 + index * 13}
-      />
+      <CanModel product={product} textureScale={0.5} />
     </group>
   );
 }
