@@ -1,55 +1,57 @@
 # NITRO 3D Experience
 
-A scroll-driven NITRO Energy Drink product experience built with Next.js, React
-Three Fiber, and GSAP.
+A responsive, scroll-driven NITRO energy drink product experience built with Next.js, React Three Fiber, Three.js, and GSAP.
 
-## Stack
+## Tech stack
 
-- Next.js 16.4.6 (App Router, Turbopack)
-- React 19.3.0
-- Three.js 0.187.0 with `@react-three/fiber` and `@react-three/drei`
-- GSAP 3.15.1 with `@gsap/react` and ScrollTrigger
-- Tailwind CSS 4.3.3
-- TypeScript
+- Next.js 16 (App Router)
+- React 19 and TypeScript
+- Three.js with React Three Fiber and Drei
+- GSAP with ScrollTrigger
+- Tailwind CSS 4
+
+## Requirements
+
+- Node.js 22+
+- pnpm
 
 ## Getting started
 
-Requires Node.js 22+ and pnpm.
-
 ```bash
-pnpm install --registry=https://registry.npmjs.org
+pnpm install
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). The review route is
-[http://localhost:3000/can-lab](http://localhost:3000/can-lab).
+Open [http://localhost:3000](http://localhost:3000).
 
-## Scripts
+## Available scripts
 
 ```bash
-pnpm dev        # development server
-pnpm build      # production build
-pnpm start      # production server
-pnpm lint       # ESLint
-pnpm typecheck  # TypeScript
+pnpm dev        # Start the development server
+pnpm build      # Create a production build
+pnpm start      # Start the production server
+pnpm lint       # Run ESLint
+pnpm typecheck  # Run TypeScript checks
 ```
 
-## Structure
+## Project structure
 
 ```text
-src/app/                    routes, fonts, design tokens
-src/components/layout/      navigation and social links
-src/components/sections/    hero section and scroll timeline
-src/components/three/       canvas, can, lighting, camera, lab UI
-src/lib/animation/          shared scroll-driven experience state
-src/lib/products/           product configs and label texture treatment
-src/types/                  shared product and orientation types
-.ref/                       recovered visual references (preserve)
-.review/                    supplied SVG artwork and review captures
-docs/                       asset inventory and recovery report
+src/app/                    App Router pages and global styles
+src/components/layout/      Navigation and shared layout elements
+src/components/sections/    Page sections and scroll experience
+src/components/three/       Three.js scene, can model, camera, and lighting
+src/lib/animation/          Scroll-driven animation state and timelines
+src/lib/products/           Product configuration and label texture generation
+src/types/                  Shared TypeScript types
+public/                     Static runtime assets
+docs/                       Project asset notes
 ```
 
-## Documentation
+## Review route
 
-- [Asset inventory](docs/asset-inventory.md)
-- [Recovery report](docs/recovery-report.md)
+`/can-lab` is a local can-model inspection route. It is intended for development and visual review.
+
+## Reference assets
+
+The original design references, supplied SVG samples, and local review screenshots are kept in the ignored `.ref/` and `.review/` directories. They are local working materials and are not included in the Git repository. See [Asset inventory](docs/asset-inventory.md) for details.

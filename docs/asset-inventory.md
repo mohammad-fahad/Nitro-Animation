@@ -1,59 +1,25 @@
 # Asset inventory
 
-All recovered references are stored in `.ref/`. They are retained as captured and
-must not be overwritten or deleted. Paths are relative to the repository root.
+This document distinguishes runtime assets committed to the project from local reference material used during implementation.
 
-## Original recovered references
+## Runtime assets
 
-| File | Size | Status | Role |
-| --- | ---: | --- | --- |
-| `.ref/figma-cover-640.jpg` | 137,786 bytes | Valid | Primary desktop hero composition: black background, oversized yellow NITRO wordmark, centered horizontal can, navigation and footer. |
-| `.ref/nav-zoom.png` | 35,865 bytes | Valid | Navigation spacing, typography, and Buy Now treatment. |
-| `.ref/nav-buynow.png` | 18,142 bytes | Valid | Close-up of the yellow Buy Now button. |
-| `.ref/footer-zoom.png` | 120,141 bytes | Valid | Footer copy, dual CTA treatment, and social icons. |
-| `.ref/can-zoom.png` | 465,189 bytes | Valid | Horizontal can proportions, label layout, metal rims, and emblem placement. |
-| `.ref/big-N.png` | 97,894 bytes | Valid | Oversized background wordmark geometry and layering. |
-| `.ref/can-rot-cw.png` | 455,188 bytes | Valid | Clockwise axial can rotation state. |
-| `.ref/can-rot-ccw.png` | 455,329 bytes | Valid | Counter-clockwise axial can rotation state. |
-| `.ref/figma-cover.jpg` | 61 bytes | Corrupt | Failed download placeholder containing a JSON error. Preserved for recovery provenance; not usable as an image. |
+- `public/` contains static assets served by the application.
+- `public/images/nitro-label.jpg` is the label image used by the can texture pipeline.
+- `src/lib/products/products.ts` contains the five flavour configurations and their label asset references.
+- `src/lib/products/createLabelTexture.ts` prepares the label artwork for the 3D can.
+- `src/components/three/CanModel.tsx` applies the label texture and builds the can materials and geometry.
+- `src/components/three/DewDrops.tsx` renders the 3D condensation droplets.
 
-The corrupt file contains:
+## Local reference material
 
-```json
-{"status":400,"err":"Width and height must be 0 > x >= 1280"}
-```
+The following directories are intentionally excluded from Git by `.gitignore`:
 
-## Derived inspection files
+- `.review/` — supplied NITRO SVG samples, visual references, and local review screenshots.
+- `.ref/` — recovered reference captures used during implementation.
 
-These files were generated during label-layout investigation. They are derived
-from the original references and are not source assets.
+These directories are local working materials, not application runtime dependencies. Keep the original supplied SVGs and reference captures in the local workspace; do not copy review screenshots into the production asset directory unless the application actually uses them.
 
-- `.ref/inspect-label-left.png`
-- `.ref/inspect-label-left-rot90.png`
-- `.ref/inspect-label-left-rotm90.png`
+## Source of truth
 
-## Artwork status
-
-The supplied NITRO SVGs live in `.review/`. Each SVG embeds the same silver-can
-and three-panel label images; the flavour variants differ by hue overlay. The
-runtime label asset is extracted into `public/images/nitro-label.jpg`.
-
-`src/lib/products/createLabelTexture.ts` crops the middle label panel, applies
-the flavour hue, and boosts label contrast. `src/components/three/CanModel.tsx`
-maps the result to the can and adds transparent 3D condensation droplets.
-
-Product configuration remains the source of truth:
-
-- `ProductConfig.labelTexture` (`src/types/product.ts`)
-- label paths for all five flavours in `src/lib/products/products.ts`
-
-The supplied artwork is the source of truth for emblem geometry, typography,
-gradients, condensation detail, and back-panel layout.
-
-## Verification captures
-
-Local review captures live in `.review/` and are not source assets:
-
-- Desktop: `hero-01.png`, `hero-02-scroll.png`, `hero-03-scroll.png`
-- Lab: `lab-01-horizontal.png`, `lab-02-axial.png`, `lab-03-vertical.png`
-- Mobile: `mobile-01-hero.png`, `mobile-02-scroll.png`, `mobile-03-can-lab.png`
+Use the supplied SVG artwork in `.review/` as the visual reference for the can and flavour designs. The committed runtime assets and texture-generation code under `public/` and `src/lib/products/` are what the application loads at runtime.
