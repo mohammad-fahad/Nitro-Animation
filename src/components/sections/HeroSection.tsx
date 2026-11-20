@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { SocialLinks } from "@/components/layout/SocialLinks";
 
@@ -18,12 +19,18 @@ export function HeroSection() {
       <div
         data-hero-wordmark
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-[37%] z-10 select-none md:top-[44%]"
+        className="pointer-events-none absolute inset-x-0 top-[34%] z-10 select-none md:top-[43%]"
       >
         <div className="-translate-y-1/2 text-center will-change-transform">
-          <span className="display-wordmark inline-block whitespace-nowrap">
-            NITRO
-          </span>
+          <Image
+            src="/images/hero-text.svg"
+            alt=""
+            width={1760}
+            height={398}
+            priority
+            unoptimized
+            className="mx-auto h-auto w-[96vw] max-w-none md:w-[97.5vw] md:max-w-[1760px]"
+          />
         </div>
       </div>
 

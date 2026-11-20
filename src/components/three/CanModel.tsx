@@ -78,7 +78,7 @@ export function CanModel({
     product.labelTexture ?? LABEL_ARTWORK_URL,
   );
 
-  const labelTexture = useMemo(
+  const labelTextures = useMemo(
     () => createLabelTexture(artwork.image, product, textureScale),
     [artwork, product, textureScale],
   );
@@ -86,19 +86,19 @@ export function CanModel({
   const labelMaterial = useMemo(
     () =>
       new THREE.MeshPhysicalMaterial({
-        map: labelTexture,
-        emissiveMap: labelTexture,
+        map: labelTextures.map,
+        emissiveMap: labelTextures.emissiveMap,
         emissive: "#ffffff",
-        emissiveIntensity: 0.42,
+        emissiveIntensity: 1.15,
         color: "#ffffff",
-        metalness: 0.04,
-        roughness: 0.55,
-        clearcoat: 0.22,
-        clearcoatRoughness: 0.42,
-        envMapIntensity: 0.4,
+        metalness: 0,
+        roughness: 0.62,
+        clearcoat: 0.1,
+        clearcoatRoughness: 0.56,
+        envMapIntensity: 0.28,
         side: THREE.FrontSide,
       }),
-    [labelTexture],
+    [labelTextures],
   );
 
   const bodyMaterial = useMemo(
@@ -151,7 +151,8 @@ export function CanModel({
     return () => {
       bodyGeometry.dispose();
       labelGeometry.dispose();
-      labelTexture.dispose();
+      labelTextures.map.dispose();
+      labelTextures.emissiveMap.dispose();
       labelMaterial.dispose();
       bodyMaterial.dispose();
       aluminumMaterial.dispose();
@@ -161,7 +162,7 @@ export function CanModel({
   }, [
     bodyGeometry,
     labelGeometry,
-    labelTexture,
+    labelTextures,
     labelMaterial,
     bodyMaterial,
     aluminumMaterial,

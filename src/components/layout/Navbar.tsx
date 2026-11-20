@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 const navigation = [
@@ -14,12 +15,16 @@ export function Navbar() {
       <div className="pointer-events-auto relative flex h-20 items-center justify-between px-6 sm:px-10 lg:px-16">
         <div className="absolute inset-x-0 top-0 -z-10 h-28 bg-gradient-to-b from-black/80 to-transparent" />
 
-        <Link
-          href="#home"
-          aria-label="NITRO home"
-          className="font-display text-[21px] italic tracking-[-0.03em] text-nitro-yellow"
-        >
-          NITRO
+        <Link href="#home" aria-label="NITRO home" className="block">
+          <Image
+            src="/images/brand-logo.svg"
+            alt="NITRO"
+            width={72}
+            height={17}
+            priority
+            unoptimized
+            className="h-[17px] w-auto"
+          />
         </Link>
 
         <nav

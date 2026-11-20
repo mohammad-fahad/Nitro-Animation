@@ -22,6 +22,19 @@ import {
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
+const SINCE_CAMERA_Z = 6.9;
+const SINCE_CAN_LENGTH = 3.72;
+const SINCE_CAN_WIDTH_RATIO = 0.8;
+const HALF_FOV_TANGENT = Math.tan((30 * Math.PI) / 360);
+
+function sinceCanScale() {
+  const aspect = window.innerWidth / window.innerHeight;
+  const visibleWidth = 2 * HALF_FOV_TANGENT * SINCE_CAMERA_Z * aspect;
+  const targetWidth = visibleWidth * SINCE_CAN_WIDTH_RATIO;
+
+  return Math.min(1.55, Math.max(1, targetWidth / SINCE_CAN_LENGTH));
+}
+
 export function ScrollExperience() {
   const rootRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = usePrefersReducedMotion();
@@ -159,11 +172,11 @@ export function ScrollExperience() {
         .to(
           experienceState,
           {
-            positionX: () => (isMobile() ? 0 : -1.1),
-            positionY: () => (isMobile() ? 0.55 : 0.05),
-            scale: () => (isMobile() ? 0.92 : 1.04),
+            positionX: 0,
+            positionY: () => (isMobile() ? 0.55 : 0),
+            scale: () => (isMobile() ? 0.92 : sinceCanScale()),
             spin: Math.PI * 2,
-            cameraZ: () => (isMobile() ? 7.9 : 7),
+            cameraZ: () => (isMobile() ? 7.9 : SINCE_CAMERA_Z),
             duration: 1.8,
             ease: "power2.inOut",
           },

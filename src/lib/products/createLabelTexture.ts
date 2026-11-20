@@ -18,6 +18,16 @@ const LABEL_HUES: Record<ProductConfig["id"], string | null> = {
   blue: "#0004ff",
 };
 
+function configureLabelTexture(texture: THREE.CanvasTexture) {
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.anisotropy = 16;
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.ClampToEdgeWrapping;
+  texture.repeat.set(2, 1);
+  texture.offset.set(-0.5, 0);
+  texture.needsUpdate = true;
+}
+
 export function createLabelTexture(
   artwork: CanvasImageSource,
   product: ProductConfig,
@@ -40,7 +50,7 @@ export function createLabelTexture(
     throw new Error("Canvas 2D is unavailable.");
   }
 
-  context.filter = "contrast(1.24) brightness(1.08) saturate(1.08)";
+  context.filter = "contrast(1.4) brightness(0.98) saturate(1.02)";
   context.drawImage(
     artwork,
     PANEL_OFFSET_X,
@@ -63,14 +73,45 @@ export function createLabelTexture(
     context.globalCompositeOperation = "source-over";
   }
 
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.colorSpace = THREE.SRGBColorSpace;
-  texture.anisotropy = 16;
-  texture.wrapS = THREE.RepeatWrapping;
-  texture.wrapT = THREE.ClampToEdgeWrapping;
-  texture.repeat.set(2, 1);
-  texture.offset.set(-0.5, 0);
-  texture.needsUpdate = true;
+  context.fillStyle = "#c9ccc7";
+  context.font = `600 ${Math.round(19 * scale)}px Arial, sans-serif`;
+  context.textAlign = "center";
+  context.textBaseline = "middle";
+  context.fillText("500 ML", width / 2, Math.round(height * 0.122));
 
-  return texture;
+  const emissiveCanvas = document.createElement("canvas");
+  emissiveCanvas.width = width;
+  emissiveCanvas.height = height;
+  const emissiveContext = emissiveCanvas.getContext("2d");
+
+  if (!emissiveContext) {
+    throw new Error("Canvas 2D is unavailable.");
+  }
+
+  const labelPixels = context.getImageData(0, 0, width, height);
+  const emissivePixels = emissiveContext.createImageData(width, height);
+
+  for (let index = 0; index < labelPixels.data.length; index += 4) {
+    const red = labelPixels.data[index];
+    const green = labelPixels.data[index + 1];
+    const blue = labelPixels.data[index + 2];
+    const luminance = (red * 0.2126 + green * 0.7152 + blue * 0.0722) / 255;
+    const strength =
+      Math.min(1, Math.max(0, (luminance - 0.28) / 0.52)) ** 2;
+
+    emissivePixels.data[index] = Math.min(255, red * strength * 1.42);
+    emissivePixels.data[index + 1] = Math.min(255, green * strength * 1.42);
+    emissivePixels.data[index + 2] = Math.min(255, blue * strength * 1.42);
+    emissivePixels.data[index + 3] = 255;
+  }
+
+  emissiveContext.putImageData(emissivePixels, 0, 0);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  configureLabelTexture(texture);
+
+  const emissiveTexture = new THREE.CanvasTexture(emissiveCanvas);
+  configureLabelTexture(emissiveTexture);
+
+  return { map: texture, emissiveMap: emissiveTexture };
 }

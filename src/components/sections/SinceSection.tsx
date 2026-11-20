@@ -18,7 +18,7 @@ export function SinceSection() {
             alt=""
             fill
             sizes="(min-width: 768px) 56vw, 100vw"
-            className="object-contain object-center grayscale contrast-125 brightness-[0.82]"
+            className="object-cover object-bottom grayscale contrast-125 brightness-[0.8]"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent md:bg-gradient-to-r md:from-black/5 md:via-black/25 md:to-black/80" />
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,rgba(0,0,0,0.65)_100%)]" />
@@ -53,7 +53,7 @@ export function SinceSection() {
           </span>
         </div>
 
-        <div className="absolute inset-x-5 bottom-[15%] z-10 sm:inset-x-10 md:inset-x-auto md:bottom-auto md:right-[3vw] md:top-1/2 md:w-[35vw] md:-translate-y-1/2">
+        <div className="absolute inset-x-5 bottom-[15%] z-10 sm:inset-x-10 md:inset-x-auto md:bottom-auto md:right-[3vw] md:top-[47%] md:w-[35vw] md:-translate-y-1/2">
           <h2 className="sr-only">Since 2002 producing</h2>
           <div
             aria-hidden
