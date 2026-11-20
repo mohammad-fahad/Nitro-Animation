@@ -46,7 +46,7 @@ function WebGLFallback() {
       aria-label="The interactive 3D energy drink can could not be displayed."
       className="absolute inset-0 flex items-center justify-center px-6"
     >
-      <div className="max-w-sm border border-white/15 bg-black/55 px-6 py-5 text-center backdrop-blur">
+      <div className="max-w-sm border border-white/15 bg-black/30 px-6 py-5 text-center backdrop-blur">
         <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-nitro-yellow">
           3D view unavailable
         </p>

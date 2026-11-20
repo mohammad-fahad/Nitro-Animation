@@ -29,13 +29,13 @@ export function Navbar() {
 
         <nav
           aria-label="Primary navigation"
-          className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-12 lg:flex"
+          className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-42 lg:flex"
         >
           {navigation.map((item) => (
             <Link
               key={item.label}
               href={item.href}
-              className="text-[12px] font-medium text-white/62 transition-colors hover:text-white"
+              className="text-[12px] font-medium text-white transition-colors hover:text-nitro-yellow"
             >
               {item.label}
             </Link>

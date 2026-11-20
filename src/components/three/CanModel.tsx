@@ -11,7 +11,7 @@ import {
 import type { ProductConfig } from "@/types/product";
 
 const CAN_RADIUS = 0.715;
-const CAN_TOP = 1.886;
+const CAN_TOP = 1.81;
 const CAN_BOTTOM = -1.826;
 const BODY_TOP = 1.5;
 const LABEL_TOP = 1.49;
